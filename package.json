@@ -1,0 +1,22 @@
+{
+  "name": "dbuild",
+  "version": "1.0.0",
+  "description": "Docker based build system for building linux installation media",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "docker",
+    "deb",
+    "rpm",
+    "apt",
+    "yum"
+  ],
+  "author": "Bruce Jones",
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^2.11.0",
+    "dockerode": "^2.5.3"
+  }
+}

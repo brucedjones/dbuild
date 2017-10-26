@@ -1,0 +1,85 @@
+{
+    "title":"dbuild.json",
+    "type":"object",
+    "properties":{
+        "package":{
+            "type":"object",
+            "properties":{
+                "name":{
+                    "type":"string"
+                },
+                "version":{
+                    "type":"string"
+                }
+            },
+            "required":["name","version"]
+        },
+
+        "platforms":{
+            "type":"object",
+            "properties":{
+                "apt":{
+                    "type":"array",
+                    "items": {
+                        "type": "string"
+                       }
+                },
+                "yum":{
+                    "type":"array",
+                    "items": {
+                        "type": "string"
+                       }
+                }
+            },
+            "anyOf":[
+                {"required":["apt"]},
+                {"required":["yum"]}
+            ]
+        },
+
+        "dependencies":{
+            "type":"array",
+            "items":{
+                "type":"object",
+                "properties":{
+                    "name":{
+                        "type":"string"
+                    },
+                    "apt":{
+                        "type":"string"
+                    },
+                    "yum":{
+                        "type":"string"
+                    }
+                },
+                "required":["name"]
+            }
+        },
+
+        "build":{
+            "type":"array",
+            "items":{
+                "type":"string"
+            },
+            "minItems": 1
+        },
+
+        "directories":{
+            "type":"object",
+            "properties":{
+                "src":{
+                    "type":"string"
+                },
+                "builds":{
+                    "type":"string"
+                },
+                "log":{
+                    "type":"string"
+                }
+            },
+            "required":["src","builds","log"]
+        }
+    },
+
+    "required":["package","platforms","build","directories"]
+}

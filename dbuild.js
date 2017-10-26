@@ -10,13 +10,14 @@ dbuild.build = function(dbj){
     var genTask = function(platform,manager,extension) {
         child_process.execSync('docker pull '+platform, {stdio:[0,1,2]});
 
-        var dependencies = dbj.dependencies.map((dep)=>{
-            if(dep.hasOwnProperty(manager)) return dep[manager];
-            else return dep.name;
-        });
-        
         build = dbj.build.slice();
-        if(dependencies.length > 0){
+        if(dbj.dependencies && dbj.dependencies.length>0)
+        {
+          var dependencies = dbj.dependencies.map((dep)=>{
+              if(dep.hasOwnProperty(manager)) return dep[manager];
+              else return dep.name;
+          });
+        
           if(manager=='apt')
               build.unshift("apt-get -q update", "apt-get -q install -y " + dependencies.join(' '));
           else
@@ -28,16 +29,20 @@ dbuild.build = function(dbj){
         return {platform:platform, packageManager:manager, buildScript:build.join(' && '),dbj:dbj};
     }
 
-    var aptTasks = dbj.platforms.apt.map((platform)=>{
-        return genTask(platform,'apt','deb')
-    });
+    var tasks = [];
+    if(dbj.platforms.hasOwnProperty('apt')){
+      var aptTasks = dbj.platforms.apt.map((platform)=>{
+          return genTask(platform,'apt','deb')
+      });
+      tasks = tasks.concat(aptTasks);
+    }
 
-    
-    var yumTasks = dbj.platforms.yum.map((platform)=>{
-        return genTask(platform,'yum','rpm')
-    });
-
-    tasks = aptTasks.concat(yumTasks);
+    if(dbj.platforms.hasOwnProperty('yum')){
+      var yumTasks = dbj.platforms.yum.map((platform)=>{
+          return genTask(platform,'yum','rpm')
+      });
+      tasks = tasks.concat(yumTasks);
+    }
 
     tasks.forEach(dbuild.runBuild);
     // dbuild.runBuild(tasks[0]);
@@ -47,13 +52,13 @@ dbuild.build = function(dbj){
 dbuild.buildPlatform = function (platform,dbj){
   var platformFound = false;
 
-  if(dbj.platforms.apt.indexOf(platform) >= 0){
+  if(dbj.platforms.hasOwnProperty('apt') && dbj.platforms.apt.indexOf(platform) >= 0){
     dbj.platforms.apt = [platform];
     dbj.platforms.yum = [];
     platformFound = true;
   }
   
-  if(dbj.platforms.yum.indexOf(platform) >= 0){
+  if(dbj.platforms.hasOwnProperty('yum') && dbj.platforms.yum.indexOf(platform) >= 0){
     dbj.platforms.yum = [platform];
     dbj.platforms.apt = [];
     platformFound = true;

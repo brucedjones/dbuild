@@ -1,3 +1,5 @@
+#! /usr/bin/env node
+
 const dbuild = require('./dbuild');
 const manifest = require('./manifest');
 const program = require('commander');

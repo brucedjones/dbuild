@@ -45,8 +45,6 @@ dbuild.build = function(dbj){
     }
 
     tasks.forEach(dbuild.runBuild);
-    // dbuild.runBuild(tasks[0]);
-
 }
 
 dbuild.buildPlatform = function (platform,dbj){
@@ -69,45 +67,29 @@ dbuild.buildPlatform = function (platform,dbj){
 }
 
 dbuild.runBuild = function(task){
+    console.log("Building for " + task.platform);
     var dbj = task.dbj;
     var path = process.cwd();
     var package_type = task.packageManager == 'apt' ? 'DEB' : 'RPM';
     
-    docker.createContainer({
-        Image: task.platform,
-        AttachStdin: false,
-        AttachStdout: true,
-        AttachStderr: true,
-        Tty: true,
-        Hostconfig: {
-            Binds: [path+":/home/shared/"],
-        },
-        
-        Env: ['PACKAGE_TYPE='+package_type,
-            'BUILDS_DIR=/home/shared/'+dbj.directories.builds,
-            'SOURCE_DIR=/home/shared/'+dbj.directories.src,
-            'LOG_DIR=/home/shared/'+dbj.directories.log],
-            Cmd: ['/bin/bash', '-c', task.buildScript],
-        OpenStdin: false,
-        StdinOnce: false
-      }).then(function(container) {
-        container.attach({stream: true, stdout: true, stderr: true}, function (err, stream) {
-            
-            stream.pipe(process.stdout);
+    var log = fs.createWriteStream(dbj.directories.log + '/' + task.platform.replace(':','.') + '.log');
 
-            var log = fs.createWriteStream(dbj.directories.log + '/' + task.platform.replace(':','.') + '.log');
-            stream.pipe(log);
-          });
-        return container.start();
-      })/*.then(function(container) {
-        return container.stop();
-      }).then(function(container) {
-        return container.remove();
-      }).then(function(data) {
-        console.log('container removed');
-      })*/.catch(function(err) {
-        console.log(err);
-      });
+    var options = {
+      Hostconfig: {
+          Binds: [path+":/home/shared/"],
+      },
+      
+      Env: ['PACKAGE_TYPE='+package_type,
+          'BUILDS_DIR=/home/shared/'+dbj.directories.builds,
+          'SOURCE_DIR=/home/shared/'+dbj.directories.src,
+          'LOG_DIR=/home/shared/'+dbj.directories.log],
+    }
+
+    docker.run(task.platform, ['bash', '-c', task.buildScript], log, options, function (err, data, container) {
+      container.remove().then(()=>{
+        console.log(task.platform + ' build finished');
+      })
+    });
 }
 
 module.exports = dbuild;

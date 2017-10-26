@@ -1,3 +1,4 @@
+var fs = require('fs');
 var Ajv = require('ajv');
 const schema = require('./schema.json');
 
@@ -8,6 +9,16 @@ var validateManifest = (dbj)=>{
     var validate = ajv.compile(schema);
     var valid = validate(dbj);
     if (!valid) throw(validate.errors);
+
+    var path = process.cwd();
+    var srcDir = path+'\\'+dbj.directories.src;
+    var logDir = path+'\\'+dbj.directories.log;
+    var buildsDir = path+'\\'+dbj.directories.builds;
+
+    if(!fs.existsSync(srcDir)) throw("Error: Source directory does not exist");
+    if(!fs.existsSync(logDir)) throw("Error: Log directory does not exist");
+    if(!fs.existsSync(buildsDir)) throw("Error: Builds directory does not exist");
+
 }
 
 manifest.get = () => {

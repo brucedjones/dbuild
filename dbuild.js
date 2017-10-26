@@ -16,10 +16,12 @@ dbuild.build = function(dbj){
         });
         
         build = dbj.build.slice();
-        if(manager=='apt')
-            build.unshift("apt-get -q update", "apt-get -q install -y " + dependencies.join(' '));
-        else
-            build.unshift("yum install -y -d1 " + dependencies.join(' '));
+        if(dependencies.length > 0){
+          if(manager=='apt')
+              build.unshift("apt-get -q update", "apt-get -q install -y " + dependencies.join(' '));
+          else
+              build.unshift("yum install -y -d1 " + dependencies.join(' '));
+        }
 
         build.push("mv $BUILDS_DIR/output."+extension.toLowerCase()+" $BUILDS_DIR/"+dbj.package.name+"-"+dbj.package.version+"-"+platform.replace(':','.')+"."+extension.toLowerCase());
 

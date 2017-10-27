@@ -3,14 +3,16 @@ dbuild is a docker based build system to facilitate linux package generation.
 
 ### dbuild will:
 * Create a docker container for each platform specified.
-* Install specified dependency using the platforms package manager.
+* Install specified dependencies using the platforms package manager.
 * Execute the user specified compilation and package generation script.
 * Populate the builds directory with an installation package for each platform specified.
 
 ### dbuild will not:
 * Solve dependency hell.
+* Test resulting packages (*yet*)
 
-Disclaimer: Packages should be tested on target platform. Automated testing will be implemented in the future.
+### Prerequisites
+* Docker
 
 # Usage
 
@@ -29,21 +31,21 @@ project_root
     |-- dbuild.sh
 ```
 
-(*) log and builds directories will be created automatically if they do not already exist
+(*) log and builds directories will be created automatically if they do not already exist.
 
-With such a structure dbuild may be invoked to build for all specified platforms by,
+dbuild may be invoked from the project root to build for all specified platforms with,
 
 ```bash
 $ dbuild
 ```
 
-or for a specific platform,
+or for a specific platform (which is specified in dbuild.json)
 
 ```bash
 $ dbuild -p ubuntu:17.10
 ```
 
-or for all  versions of the same platform (specified in dbuild.json)
+or for all  versions of the same platform (which are specified in dbuild.json)
 
 ```bash
 $ dbuild -p ubuntu
@@ -54,10 +56,6 @@ or for multiple independent platforms,
 ```bash
 $ dbuild -p ubuntu:17.10 -p centos:7
 ```
-
-
-# Prerequisites
-* Docker
 
 ## dbuild.json
 The dbuild.json specifies,

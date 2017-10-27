@@ -17,8 +17,10 @@
   "license": "MIT",
   "dependencies": {
     "ajv": "^5.3.0",
+    "async": "^2.5.0",
     "commander": "^2.11.0",
-    "dockerode": "^2.5.3"
+    "dockerode": "^2.5.3",
+    "node-cleanup": "^2.1.2"
   },
   "preferGlobal": true,
   "bin": {

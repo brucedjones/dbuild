@@ -1,9 +1,36 @@
 var fs = require("fs");
 var child_process = require('child_process');
+var nodeCleanup = require('node-cleanup');
+var async = require('async');
 var Docker = require('dockerode');
 var docker = new Docker();
 
+var spawnedContainers = [];
 var dbuild = {};
+
+nodeCleanup(function (exitCode, signal) {
+  if (signal) {
+    console.log('Exiting early, build not finished. Please wait for containers to be stopped.')
+    async.map(spawnedContainers, (id,callback)=>{
+      var container = docker.getContainer(id);
+      container.stop().then((container)=>{
+        return container.remove();
+      },()=>{
+        callback();
+      }).then((container)=>{
+        callback();
+      },()=>{
+        callback();
+      });
+    }, (err, results)=>{
+      console.log('Exiting...')
+      process.kill(process.pid, signal);
+    });
+
+    nodeCleanup.uninstall(); // don't call cleanup handler again 
+    return false;
+  }
+});
 
 dbuild.build = function(dbj){
 
@@ -98,6 +125,7 @@ dbuild.buildPlatforms = function(platforms,dbj){
   });
 }
 
+
 dbuild.runBuild = function(task){
     console.log("Building for " + task.platform);
     var dbj = task.dbj;
@@ -121,7 +149,9 @@ dbuild.runBuild = function(task){
       container.remove().then(()=>{
         log.end();
         console.log(task.platform + ' build finished');
-      })
+      }).catch(()=>{})
+    }).on('container', function (container) {
+      spawnedContainers.push(container.id);
     });
 }
 

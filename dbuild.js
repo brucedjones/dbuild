@@ -56,19 +56,39 @@ dbuild.build = function(dbj){
 
 dbuild.buildPlatform = function (platform,dbj){
   var platformFound = false;
-
-  if(dbj.platforms.hasOwnProperty('apt') && dbj.platforms.apt.indexOf(platform) >= 0){
-    dbj.platforms.apt = [platform];
-    dbj.platforms.yum = [];
-    platformFound = true;
-  }
   
-  if(dbj.platforms.hasOwnProperty('yum') && dbj.platforms.yum.indexOf(platform) >= 0){
-    dbj.platforms.yum = [platform];
-    dbj.platforms.apt = [];
-    platformFound = true;
+  if(dbj.platforms.hasOwnProperty('apt')){
+      var candidates = dbj.platforms.apt = dbj.platforms.apt.reduce((prev,curr)=>{
+      var baseCurr = curr.split(':')[0];
+      if(platform == curr) prev.push(curr);
+      if(platform == baseCurr) prev.push(curr)
+      return prev;
+    },[]);
+
+    if(candidates.length>0){
+      dbj.platforms.apt = candidates
+      dbj.platforms.yum = [];
+      platformFound = true;
+    }
+  }
+    
+  if(dbj.platforms.hasOwnProperty('yum')){
+      var candidates = dbj.platforms.yum.reduce((prev,curr)=>{
+      var baseCurr = curr.split(':')[0];
+      if(platform == curr) prev.push(curr);
+      if(platform == baseCurr) prev.push(curr)
+      return prev;
+    },[]);
+    
+    if(candidates.length>0){
+      dbj.platforms.yum = candidates
+      dbj.platforms.apt = [];
+      platformFound = true;
+    }
   }
 
+  console.log(platformFound)
+  console.log(JSON.stringify(dbj.platforms))
   if(platformFound) dbuild.build(dbj);
   else console.log('Error: Platform ' + platform + ' not found. Check dbuild.json for available platforms')
 }

@@ -16,6 +16,12 @@ dbuild is a docker based build system to facilitate linux package generation.
 
 # Usage
 
+dbuild should be installed globally with,
+
+```bash
+$ npm install dbuild -g
+```
+
 A typical dbuild directory structure is as follows,
 
 ```code

@@ -87,8 +87,6 @@ dbuild.buildPlatform = function (platform,dbj){
     }
   }
 
-  console.log(platformFound)
-  console.log(JSON.stringify(dbj.platforms))
   if(platformFound) dbuild.build(dbj);
   else console.log('Error: Platform ' + platform + ' not found. Check dbuild.json for available platforms')
 }

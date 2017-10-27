@@ -18,10 +18,16 @@ var validateDirectoryStructure = (dbj)=>{
     var buildsDir = path+'\\'+dbj.directories.builds;
     var buildScript = path+'\\dbuild.sh';
 
-    if(!fs.existsSync(srcDir)) throw("Error: Source directory does not exist");
-    if(!fs.existsSync(logDir)) throw("Error: Log directory does not exist");
-    if(!fs.existsSync(buildsDir)) throw("Error: Builds directory does not exist");
+    if(!fs.existsSync(logDir)) {
+        console.log("Warning: Log directory doesn't exist, creating...")
+        fs.mkdirSync(logDir);
+    }
+    if(!fs.existsSync(buildsDir)) {
+        console.log("Warning: Builds directory doesn't exist, creating...")
+        fs.mkdirSync(buildsDir);
+    }
 
+    if(!fs.existsSync(srcDir)) throw("Error: Source directory does not exist");
     if(!fs.existsSync(buildScript)) throw("Error: Build script does not exist");
 }
 

@@ -25,5 +25,9 @@
   "preferGlobal": true,
   "bin": {
     "dbuild": "index.js"
-  }
+  },
+  "repository" :{ 
+      "type" : "git",
+      "url" : "https://github.com/brucedjones/dbuild"
+    }
 }

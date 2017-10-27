@@ -119,6 +119,7 @@ dbuild.runBuild = function(task){
 
     docker.run(task.platform, ['bash', '-c', task.buildScript], log, options, function (err, data, container) {
       container.remove().then(()=>{
+        log.end();
         console.log(task.platform + ' build finished');
       })
     });

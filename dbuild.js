@@ -14,8 +14,11 @@ dbuild.build = function(dbj){
         if(dbj.dependencies && dbj.dependencies.length>0)
         {
           var dependencies = dbj.dependencies.map((dep)=>{
-              if(dep.hasOwnProperty(manager)) return dep[manager];
-              else return dep.name;
+            var basePlatform = platform.split(':')[0];
+            if(dep.hasOwnProperty(basePlatform)) return dep[basePlatform];
+            else if(dep.hasOwnProperty(platform)) return dep[platform];
+            else if(dep.hasOwnProperty(manager)) return dep[manager];
+            else return dep.name;
           });
         
           if(manager=='apt')

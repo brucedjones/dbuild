@@ -52,6 +52,9 @@
                         "type":"string"
                     }
                 },
+                "additionalProperties" : {
+                    "type" : "string"
+                },
                 "required":["name"]
             }
         },

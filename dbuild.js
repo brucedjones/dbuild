@@ -10,7 +10,8 @@ dbuild.build = function(dbj){
     var genTask = function(platform,manager,extension) {
         child_process.execSync('docker pull '+platform, {stdio:[0,1,2]});
 
-        build = dbj.build.slice();
+        var build = []
+
         if(dbj.dependencies && dbj.dependencies.length>0)
         {
           var dependencies = dbj.dependencies.map((dep)=>{
@@ -22,11 +23,14 @@ dbuild.build = function(dbj){
           });
         
           if(manager=='apt')
-              build.unshift("apt-get -q update", "apt-get -q install -y " + dependencies.join(' '));
+              build.push("apt-get -q update", "apt-get -q install -y " + dependencies.join(' '));
           else
-              build.unshift("yum install -y -d1 " + dependencies.join(' '));
+              build.push("yum install -y -d1 " + dependencies.join(' '));
         }
 
+        build.push("chmod -x /home/shared/dbuild.sh")
+        build.push("/home/shared/dbuild.sh")
+        
         build.push("mv $BUILDS_DIR/output."+extension.toLowerCase()+" $BUILDS_DIR/"+dbj.package.name+"-"+dbj.package.version+"-"+platform.replace(':','.')+"."+extension.toLowerCase());
 
         return {platform:platform, packageManager:manager, buildScript:build.join(' && '),dbj:dbj};

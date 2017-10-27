@@ -59,14 +59,6 @@
             }
         },
 
-        "build":{
-            "type":"array",
-            "items":{
-                "type":"string"
-            },
-            "minItems": 1
-        },
-
         "directories":{
             "type":"object",
             "properties":{
@@ -84,5 +76,5 @@
         }
     },
 
-    "required":["package","platforms","build","directories"]
+    "required":["package","platforms","directories"]
 }

@@ -30,7 +30,7 @@ dbuild.build = function(dbj){
 
         build.push("chmod -x /home/shared/dbuild.sh")
         build.push("/home/shared/dbuild.sh")
-        
+
         build.push("mv $BUILDS_DIR/output."+extension.toLowerCase()+" $BUILDS_DIR/"+dbj.package.name+"-"+dbj.package.version+"-"+platform.replace(':','.')+"."+extension.toLowerCase());
 
         return {platform:platform, packageManager:manager, buildScript:build.join(' && '),dbj:dbj};
@@ -71,6 +71,13 @@ dbuild.buildPlatform = function (platform,dbj){
 
   if(platformFound) dbuild.build(dbj);
   else console.log('Error: Platform ' + platform + ' not found. Check dbuild.json for available platforms')
+}
+
+dbuild.buildPlatforms = function(platforms,dbj){
+  platforms.forEach((platform)=>{
+    var tmpdbj = JSON.parse(JSON.stringify(dbj));
+    dbuild.buildPlatform(platform,tmpdbj);
+  });
 }
 
 dbuild.runBuild = function(task){
